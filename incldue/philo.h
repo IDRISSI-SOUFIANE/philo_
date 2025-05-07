@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sidrissi <sidrissi@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/07 09:25:35 by sidrissi          #+#    #+#             */
+/*   Updated: 2025/05/07 11:26:30 by sidrissi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 #define PHILO_H
 
@@ -41,32 +53,21 @@ typedef struct s_program
 }	t_program;
 
 
-// utils
 long	ft_atoi(char *str);
 int		is_not_digit(char *av);
 long	get_current_time(void);
 void	precise_usleep(long duration_ms);
 int		ft_strcmp(char *s1, char *s2);
 
-//init
-int	init_program(t_program *program, t_philo *philos);
-int	init_forks(pthread_mutex_t *forks, int n_philo);
-int	init_philos(t_program *program, t_philo *philo, pthread_mutex_t *forks,
+int		init_program(t_program *program, t_philo *philos);
+int		init_forks(pthread_mutex_t *forks, int n_philo);
+int		init_philos(t_program *program, t_philo *philo, pthread_mutex_t *forks,
 			char **av);
 
+void    *manage(void *arg);
+int		creat_thread(t_program *program, pthread_mutex_t *forks);
 
-// thread.c
-int	creat_thread(t_program *program, pthread_mutex_t *forks);
-
-//helper_thread.c
 int		check_death(t_philo *philo);
 void	write_message(char *str, t_philo *philo, int id);
-
-// manage.c
-void    *manage(void *arg);
-
-// helper_thread
-
-/*helper_threas*/
-int destroy(t_program *program, pthread_mutex_t *forks);
+int		destroy( t_program *program, pthread_mutex_t *forks, int index, int flag);
 #endif

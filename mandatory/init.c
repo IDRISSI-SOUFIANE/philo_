@@ -6,7 +6,7 @@
 /*   By: sidrissi <sidrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:03:36 by sidrissi          #+#    #+#             */
-/*   Updated: 2025/05/02 21:45:07 by sidrissi         ###   ########.fr       */
+/*   Updated: 2025/05/07 10:40:48 by sidrissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	fill_input(t_philo *philo, char **av)
 	philo->time_to_die = ft_atoi(av[2]);
 	philo->time_to_eat = ft_atoi(av[3]);
 	philo->time_to_sleep = ft_atoi(av[4]);
-	if (av[5] && ft_atoi(av[5]))
+	if (av[5])
 		philo->num_time_to_eat = ft_atoi(av[5]);
 	else
 		philo->num_time_to_eat = -1;
@@ -27,7 +27,6 @@ void	fill_input(t_philo *philo, char **av)
 int	init_philos(t_program *program, t_philo *philo, pthread_mutex_t *forks,
 			char **av)
 {
-
 	int	i;
 
 	i = 0;
@@ -58,7 +57,7 @@ int	init_forks(pthread_mutex_t *forks, int n_philo)
 	while (i < n_philo)
 	{
 		if (pthread_mutex_init(&forks[i], NULL))
-			return (write(2, "Error in init_forks\n", 22), 1);
+			return (write(2, "Error in init_forks\n", 22), i);
 		i++;
 	}
 	return (0);
@@ -71,8 +70,8 @@ int	init_program(t_program *program, t_philo *philos)
 	if (pthread_mutex_init(&program->dead_lock, NULL))
 		return (write(2, "Error in init_program\n", 23), 1);
 	if (pthread_mutex_init(&program->meal_lock, NULL))
-		return (write(2, "Error in init_program\n", 23), 1);
+		return (write(2, "Error in init_program\n", 23), 2);
 	if (pthread_mutex_init(&program->write_lock, NULL))
-		return (write(2, "Error in init_program\n", 23), 1);
+		return (write(2, "Error in init_program\n", 23), 3);
 	return (0);
 }

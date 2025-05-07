@@ -6,7 +6,7 @@
 /*   By: sidrissi <sidrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 16:47:20 by sidrissi          #+#    #+#             */
-/*   Updated: 2025/05/03 20:39:36 by sidrissi         ###   ########.fr       */
+/*   Updated: 2025/05/07 11:24:35 by sidrissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	eat(t_philo *philo)
 {
 	pthread_mutex_lock(philo->r_fork);
 	write_message("is took a fork", philo, philo->id);
-	// case sensitive 
 	if (philo->num_philos == 1)
 	{
 		precise_usleep(philo->time_to_die);
@@ -36,6 +35,7 @@ void	eat(t_philo *philo)
 	}
 	pthread_mutex_lock(philo->l_fork);
 	write_message("is took a fork", philo, philo->id);
+	precise_usleep(1);
 	write_message("is eating", philo, philo->id);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->last_meal = get_current_time();
@@ -71,23 +71,24 @@ int	creat_thread(t_program *program, pthread_mutex_t *forks)
 
 	i = 0;
 	if (pthread_create(&super_visour, NULL, &manage, program->philos))
-		return(destroy(program, forks), 1);
+		return(destroy(program, forks, 0, 42), 1);
 	while (i < program->philos[0].num_philos)
 	{
 		if (pthread_create(&program->philos[i].thread, NULL, &philo_routine, &program->philos[i]))
-			return(destroy(program, forks), 1);
+			return(destroy(program, forks, 0, 42), 1);
 		i++;
 	}
 	i = 0;
 	if (pthread_join(super_visour, NULL))
-		return(destroy(program, forks), 1);
+		return(destroy(program, forks, 0, 42), 1);
 	while (i < program->philos[0].num_philos)
 	{
 		if (pthread_join(program->philos[i].thread, NULL))
 		{
-			destroy(program, forks);
+			destroy(program, forks, 0, 42);
 			return (1);
 		}
+		i++;
 	}
 	return (0);
 }

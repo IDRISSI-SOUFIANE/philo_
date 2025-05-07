@@ -6,7 +6,7 @@
 /*   By: sidrissi <sidrissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 18:09:35 by sidrissi          #+#    #+#             */
-/*   Updated: 2025/05/06 09:24:55 by sidrissi         ###   ########.fr       */
+/*   Updated: 2025/05/07 11:12:08 by sidrissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,30 @@ static int valid_input(char **av)
 	return (0);
 }
 
-void	f()
+int	initilazation(t_program *program, t_philo *philos,
+					pthread_mutex_t *forks, char **av)
 {
-	system("leaks ./a.out");
+	int	index;
+	
+	index = 0;
+	index = init_program(program, philos);
+	if (index)		
+		return (destroy(program, forks, index, 0), free(philos),
+			free(forks), 1);
+	index = init_forks(forks, ft_atoi(av[1]));
+	if (index)
+		return (destroy(program, forks, index, 1), free(philos),
+			free(forks), 1);
+	if (init_philos(program, philos, forks, av))
+		return (destroy(program, forks, 0, 42), free(philos), free(forks), 1);
+	if (creat_thread(program, forks))
+		return (destroy(program, forks, 0, 42), free(philos), free(forks), 1);
+	return (0);
 }
 
 
 int main(int ac, char **av)
 {
-	// atexit(f);
 	t_program		program;
 	t_philo			*philos;
 	pthread_mutex_t	*forks;
@@ -55,20 +70,8 @@ int main(int ac, char **av)
 	forks = malloc(sizeof(pthread_mutex_t) * n_philo);
 	if (!forks)
 		return (free(philos), 1);
-
-	if (init_program(&program, philos))
-		return (free(philos), free(forks), 1);
-	if (init_forks(forks, ft_atoi(av[1])))
-		return (free(philos), free(forks), 1);
-	if (init_philos(&program, philos, forks, av))
-		return (free(philos), free(forks), 1);
-
-	if (creat_thread(&program, forks))
-		return (free(philos), free(forks), 1);
-	destroy(&program, forks);
-	free(philos);
-	free(forks);
-	return (0);
+	if (initilazation(&program, philos, forks, av))
+		return (1);
+	destroy(&program, forks, 0, 42);
+	return (free(philos), free(forks), 0);
 }
-
-// I can use ft_destroy("fail create thread\n", philos, program, forks)
